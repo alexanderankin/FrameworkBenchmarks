@@ -3,9 +3,9 @@ package benchmark.repository;
 import benchmark.PgClients;
 import benchmark.model.Fortune;
 import benchmark.model.World;
-import io.reactiverse.pgclient.PgIterator;
-import io.reactiverse.pgclient.Row;
-import io.reactiverse.pgclient.Tuple;
+import io.vertx.sqlclient.Row;
+import io.vertx.sqlclient.RowIterator;
+import io.vertx.sqlclient.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -26,7 +26,7 @@ public class PgClientDbRepository implements DbRepository {
     @Override
     public Mono<World> getWorld(int id) {
         return Mono.create(sink ->
-                pgClients.getOne().preparedQuery("SELECT * FROM world WHERE id = $1", Tuple.of(id), ar -> {
+                pgClients.getOne().preparedQuery("SELECT * FROM world WHERE id = $1").execute(Tuple.of(id), ar -> {
                     if (ar.failed()) {
                         sink.error(ar.cause());
                     } else {
@@ -41,7 +41,7 @@ public class PgClientDbRepository implements DbRepository {
 
     private Mono<World> updateWorld(World world) {
         return Mono.create(sink -> {
-            pgClients.getOne().preparedQuery("UPDATE world SET randomnumber = $1 WHERE id = $2", Tuple.of(world.randomnumber, world.id), ar -> {
+            pgClients.getOne().preparedQuery("UPDATE world SET randomnumber = $1 WHERE id = $2").execute(Tuple.of(world.randomnumber, world.id), ar -> {
                 if (ar.failed()) {
                     sink.error(ar.cause());
                 } else {
@@ -62,13 +62,13 @@ public class PgClientDbRepository implements DbRepository {
     @Override
     public Flux<Fortune> fortunes() {
         return Flux.create(sink ->
-                pgClients.getOne().preparedQuery("SELECT * FROM fortune", ar -> {
+                pgClients.getOne().preparedQuery("SELECT * FROM fortune").execute(ar -> {
                     if (ar.failed()) {
                         sink.error(ar.cause());
                         return;
                     }
 
-                    PgIterator resultSet = ar.result().iterator();
+                    RowIterator<Row> resultSet = ar.result().iterator();
                     while (resultSet.hasNext()) {
                         Tuple row = resultSet.next();
                         sink.next(new Fortune(row.getInteger(0), row.getString(1)));

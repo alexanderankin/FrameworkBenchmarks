@@ -13,7 +13,7 @@ repositories.mavenCentral()
 // project.ext['spring-data-r2dbc.version'] = '1.0.0.M2'
 project.ext['spring-data-r2dbc.version'] = '1.0.0'
 project.ext['postgresql.version'] = '42.4.3'
-project.ext['pgclient.version'] = '0.11.4'
+project.ext['pgclient.version'] = '4.4.2'
 project.ext['rxjava2-jdbc.version'] = '0.2.4'
 // project.ext['r2dbc-postgresql.version'] = '1.0.0.M7'
 project.ext['r2dbc-postgresql.version'] = '0.8.13.RELEASE'
@@ -32,7 +32,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mustache'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
     runtimeOnly "org.postgresql:postgresql:${project.ext['postgresql.version']}"
-    implementation "io.reactiverse:reactive-pg-client:${project.ext['pgclient.version']}"
+    implementation "io.vertx:vertx-pg-client:${project.ext['pgclient.version']}"
     implementation "com.github.davidmoten:rxjava2-jdbc:${project.ext['rxjava2-jdbc.version']}"
     implementation "io.r2dbc:r2dbc-postgresql:${project.ext['r2dbc-postgresql.version']}"
     implementation "io.r2dbc:r2dbc-pool:${project.ext['r2dbc-pool.version']}"

@@ -1,10 +1,11 @@
 package benchmark.config;
 
 import benchmark.PgClients;
-import io.reactiverse.pgclient.PgClient;
-import io.reactiverse.pgclient.PgPool;
-import io.reactiverse.pgclient.PgPoolOptions;
 import io.vertx.core.Vertx;
+import io.vertx.pgclient.PgConnectOptions;
+import io.vertx.pgclient.PgPool;
+import io.vertx.sqlclient.PoolOptions;
+import io.vertx.sqlclient.SqlConnectOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +31,7 @@ public class PgClientConfig {
 
     @Bean
     public PgClients pgClients(Vertx vertx) {
-        List<PgClient> clients = new ArrayList<>();
+        List<PgPool> clients = new ArrayList<>();
 
         for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
             clients.add(pgClient(vertx));
@@ -41,15 +42,14 @@ public class PgClientConfig {
 
 
     public PgPool pgClient(Vertx vertx) {
-        PgPoolOptions options = new PgPoolOptions();
+        SqlConnectOptions options = new SqlConnectOptions();
         options.setDatabase(name);
         options.setHost(host);
         options.setPort(port);
         options.setUser(username);
         options.setPassword(password);
         options.setCachePreparedStatements(true);
-        options.setMaxSize(1);
-        return PgClient.pool(vertx, options);
+        return PgPool.pool(vertx, PgConnectOptions.wrap(options), new PoolOptions().setMaxSize(1));
     }
 
     public String getName() {
