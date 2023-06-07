@@ -1,0 +1,3 @@
+database:
+  url: mongodb://tfb-database:27017/?waitQueueMultiple=200
+  name: hello_world
